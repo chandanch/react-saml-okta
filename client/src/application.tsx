@@ -4,32 +4,43 @@ import logging from './config/logging';
 
 export interface IApplicationProps {}
 
+interface UserInfo {
+    issuer: string;
+    nameIDFormat: string;
+    sessionIndex: string;
+}
+
 const Application: React.FunctionComponent<IApplicationProps> = (props) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [email, setEmail] = useState<string>('');
+    const [userInfo, setUserInfo] = useState<UserInfo>({ issuer: '', nameIDFormat: '', sessionIndex: '' });
+
+    const fetchUserInfo = async () => {
+        try {
+            const response = await axios({
+                method: 'GET',
+                url: 'http://localhost:8000/userinfo',
+                withCredentials: true
+            });
+            if (response.data.user.nameID) {
+                setEmail(response.data.user.nameID);
+                setUserInfo(response.data.user);
+                setLoading(false);
+            } else {
+                RedirectToLogin();
+            }
+        } catch (error) {
+            logging.error(error, 'SAML');
+            RedirectToLogin();
+        }
+    };
 
     useEffect(() => {
         logging.info('Initiating SAML check.', 'SAML');
-
-        axios({
-            method: 'GET',
-            url: 'http://localhost:8000/whoami',
-            withCredentials: true
-        })
-            .then((response) => {
-                logging.info(response, 'SAML');
-
-                if (response.data.user.nameID) {
-                    setEmail(response.data.user.nameID);
-                    setLoading(false);
-                } else {
-                    RedirectToLogin();
-                }
-            })
-            .catch((error) => {
-                logging.error(error, 'SAML');
-                RedirectToLogin();
-            });
+        (async () => {
+            logging.info('Fetching user data');
+            await fetchUserInfo();
+        })();
     }, []);
 
     const RedirectToLogin = () => {
@@ -39,9 +50,22 @@ const Application: React.FunctionComponent<IApplicationProps> = (props) => {
     if (loading) return <p>loading ...</p>;
 
     return (
-        <p>
-            Login Successful! Hello I am <b>{email}!</b>
-        </p>
+        <div>
+            <h2 style={{ color: 'green' }}>SAML 2.0 Login with Okta IDP Successful!</h2>
+            <h4>User Details</h4>
+            <hr />
+            <p>
+                {' '}
+                User: <b>{email}</b>{' '}
+            </p>
+            <p>
+                {' '}
+                Issuer: <b>{userInfo.issuer}</b>{' '}
+            </p>
+            <p>
+                Name ID Format: <b>{userInfo.nameIDFormat}</b>
+            </p>
+        </div>
     );
 };
 

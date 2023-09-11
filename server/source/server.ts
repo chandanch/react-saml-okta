@@ -52,7 +52,7 @@ router.post('/login/callback', passport.authenticate('saml', config.saml.options
 	return res.redirect('http://localhost:3000');
 });
 
-router.get('/whoami', (req, res, next) => {
+router.get('/userinfo', (req, res, next) => {
 	if (!req.isAuthenticated()) {
 		logging.info('User not authenticated');
 
