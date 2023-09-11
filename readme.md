@@ -1,5 +1,17 @@
-# React / Express SAML Login (Using Okta)
+# React SAML Okta Integration
 
-![N|Solid](https://lh3.googleusercontent.com/a-/AOh14GglnMoBPixoeH-IwaCWx7SpehtvYTPowns21fVO=s200-k-no-rp-mo)
+A react web app and Express App with typescript demonstrating the SAML 2.0 integration with Okta
 
-Readme coming soon.
+## Setup
+
+### Server Setup
+
+1. navigate to server: `cd server`
+2. Install dependencies: `npm install`
+3. Start server: `npm start`
+
+## React App Setup
+
+1. navigate to client: `cd client`
+2. Install dependencies: `npm install`
+3. Run react app: `npm start`
