@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import logging from './config/logging';
 
 export interface IApplicationProps {}
@@ -15,7 +15,7 @@ const Application: React.FunctionComponent<IApplicationProps> = (props) => {
     const [email, setEmail] = useState<string>('');
     const [userInfo, setUserInfo] = useState<UserInfo>({ issuer: '', nameIDFormat: '', sessionIndex: '' });
 
-    const fetchUserInfo = async () => {
+    const fetchUserInfo = useCallback(async () => {
         try {
             const response = await axios({
                 method: 'GET',
@@ -33,7 +33,7 @@ const Application: React.FunctionComponent<IApplicationProps> = (props) => {
             logging.error(error, 'SAML');
             RedirectToLogin();
         }
-    };
+    }, []);
 
     useEffect(() => {
         logging.info('Initiating SAML check.', 'SAML');
@@ -41,7 +41,11 @@ const Application: React.FunctionComponent<IApplicationProps> = (props) => {
             logging.info('Fetching user data');
             await fetchUserInfo();
         })();
-    }, []);
+
+        return () => {
+            setUserInfo({ issuer: '', nameIDFormat: '', sessionIndex: '' });
+        };
+    }, [fetchUserInfo]);
 
     const RedirectToLogin = () => {
         window.location.replace('http://localhost:8000/login');

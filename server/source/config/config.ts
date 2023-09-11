@@ -1,7 +1,7 @@
 const config = {
 	saml: {
 		cert: './source/config/saml.pem',
-		entryPoint: 'https://dev-21220433.okta.com/app/dev-21220433_reactsamlic_1/exkb71in9zqKNHpXm5d7/sso/saml',
+		entryPoint: process.env.SAML_ENTRYPOINT,
 		issuer: 'http://localhost:8000',
 		options: {
 			failureRedirect: '/login',
@@ -13,7 +13,7 @@ const config = {
 	},
 	session: {
 		resave: false,
-		secret: 'tyh@qweb00n11',
+		secret: process.env.SESSION_SECRET || '',
 		saveUninitialized: true
 	}
 };

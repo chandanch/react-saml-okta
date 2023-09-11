@@ -2,6 +2,7 @@ import http from 'http';
 import express from 'express';
 import session from 'express-session';
 import passport from 'passport';
+import 'dotenv/config';
 import logging from './config/logging';
 import config from './config/config';
 import './config/passport';
@@ -69,7 +70,7 @@ router.get('/userinfo', (req, res, next) => {
 
 /** Health Check */
 router.get('/healthcheck', (req, res) => {
-	return res.status(200).json({ message: 'Server is running!' });
+	return res.status(200).json({ message: 'Server is running!', version: process.env['API_VERSION'] });
 });
 
 /** Error handling */
